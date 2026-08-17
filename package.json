@@ -1,15 +1,55 @@
 {
   "name": "vue-migration",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "CLI для миграции Vue 2 → Vue 3: Options API → Composition API и обновление синтаксиса шаблонов",
+  "type": "module",
+
+  "bin": {
+    "vuegrate": "./bin/cli.js"
   },
-  "keywords": [],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "prepublishOnly": "npm run build"
+  },
+
+  "keywords": [
+    "vue",
+    "vue2",
+    "vue3",
+    "codemod",
+    "migration",
+    "cli",
+    "composition-api"
+  ],
   "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BIGBASEDFLOPPA/vuegrate.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+
   "devDependencies": {
     "@types/babel__generator": "^7.27.0",
     "@types/babel__traverse": "^7.28.0",
