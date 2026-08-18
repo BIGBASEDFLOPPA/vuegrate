@@ -5,10 +5,10 @@ import { scanFiles } from '../core/file-scanner.js';
 const cli = cac('vuegrate');
 
 cli
-    .command('[path]', 'Путь к директории или файлу для миграции')
-    .option('--dry-run', 'Показать diff изменений без записи на диск')
-    .option('--only <transforms>', 'Применить только указанные трансформации (через запятую)')
-    .option('--ext <extensions>', 'Расширения файлов для обработки', {
+    .command('[path]', 'Path to the directory or file to migrate')
+    .option('--dry-run', 'Show a diff of changes without writing to disk')
+    .option('--only <transforms>', 'Apply only the specified transforms (comma-separated)')
+    .option('--ext <extensions>', 'File extensions to process', {
         default: '.vue,.js,.ts',
     })
     .example('vuegrate ./src')
@@ -16,15 +16,15 @@ cli
     .example('vuegrate ./src --only=options-api,v-model')
     .action(async (path: string | undefined, options) => {
         if (!path) {
-            console.error(pc.red('Ошибка: укажи путь к директории или файлу.'));
-            console.log('Пример: vuegrate ./src');
+            console.error(pc.red('Error: please provide a path to a directory or file.'));
+            console.log('Example: vuegrate ./src');
             process.exit(1);
         }
 
-        console.log(pc.cyan(`vuegrate: сканирую ${path}`));
+        console.log(pc.cyan(`vuegrate: scanning ${path}`));
 
         if (options.dryRun) {
-            console.log(pc.yellow('Режим --dry-run: файлы не будут изменены.'));
+            console.log(pc.yellow('Dry-run mode: no files will be modified.'));
         }
 
         const extensions: string[] = String(options.ext)
@@ -36,20 +36,21 @@ cli
             files = await scanFiles(path, { extensions });
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
-            console.error(pc.red(`Ошибка при сканировании: ${message}`));
+            console.error(pc.red(`Scan failed: ${message}`));
             process.exit(1);
         }
 
         if (files.length === 0) {
-            console.log(pc.yellow('Файлы не найдены.'));
+            console.log(pc.yellow('No files found.'));
             return;
         }
 
-        console.log(pc.green(`Найдено файлов: ${files.length}`));
+        console.log(pc.green(`Found ${files.length} file(s):`));
         for (const file of files) {
             console.log(pc.dim(`  ${file}`));
         }
 
+        // TODO: transform-runner → diff/write
     });
 
 cli.help();
