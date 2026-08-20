@@ -14,9 +14,12 @@ import type { ScriptTransform } from '../../core/transform-runner.js';
 export const finalizeScriptSetup: ScriptTransform = (scriptCode) => {
     const ast = parse(scriptCode, { sourceType: 'module', plugins: ['typescript'] });
 
+    let modified = false;
+
     traverse(ast, {
         ExportDefaultDeclaration(path) {
             if (!t.isObjectExpression(path.node.declaration)) return;
+            modified = true;
 
             const remainingProperties = path.node.declaration.properties;
 
@@ -32,12 +35,14 @@ export const finalizeScriptSetup: ScriptTransform = (scriptCode) => {
         },
     });
 
-    moveMacrosToTop(ast);
+    if (moveMacrosToTop(ast)) modified = true;
+
+    if (!modified) return scriptCode;
 
     return generateCode(ast);
 };
 
-function moveMacrosToTop(ast: t.File): void {
+function moveMacrosToTop(ast: t.File): boolean {
     const body = ast.program.body;
 
     const isDefineCall = (statement: t.Statement, varName: string, macroName: string) =>
@@ -60,7 +65,8 @@ function moveMacrosToTop(ast: t.File): void {
         (statement): statement is t.Statement => statement !== undefined,
     );
 
-    if (macroStatements.length === 0) return;
+    if (macroStatements.length === 0) return false;
 
     ast.program.body = [...macroStatements, ...body.filter((statement) => !macroStatements.includes(statement))];
+    return true;
 }
