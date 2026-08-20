@@ -1,6 +1,5 @@
 import { parse } from '@babel/parser';
-import traverse from '@babel/traverse';
-import generate from '@babel/generator';
+import { traverse, generateCode } from '../../core/babel-interop.js';
 import * as t from '@babel/types';
 import type { ScriptTransform } from '../../core/transform-runner.js';
 
@@ -33,5 +32,35 @@ export const finalizeScriptSetup: ScriptTransform = (scriptCode) => {
         },
     });
 
-    return generate(ast).code;
+    moveMacrosToTop(ast);
+
+    return generateCode(ast);
 };
+
+function moveMacrosToTop(ast: t.File): void {
+    const body = ast.program.body;
+
+    const isDefineCall = (statement: t.Statement, varName: string, macroName: string) =>
+        t.isVariableDeclaration(statement) &&
+        t.isVariableDeclarator(statement.declarations[0]) &&
+        t.isIdentifier(statement.declarations[0].id, { name: varName }) &&
+        t.isCallExpression(statement.declarations[0].init) &&
+        t.isIdentifier(statement.declarations[0].init.callee, { name: macroName });
+
+    const isDefineOptionsCall = (statement: t.Statement) =>
+        t.isExpressionStatement(statement) &&
+        t.isCallExpression(statement.expression) &&
+        t.isIdentifier(statement.expression.callee, { name: 'defineOptions' });
+
+    const propsStatement = body.find((statement) => isDefineCall(statement, 'props', 'defineProps'));
+    const emitsStatement = body.find((statement) => isDefineCall(statement, 'emit', 'defineEmits'));
+    const optionsStatement = body.find(isDefineOptionsCall);
+
+    const macroStatements = [propsStatement, emitsStatement, optionsStatement].filter(
+        (statement): statement is t.Statement => statement !== undefined,
+    );
+
+    if (macroStatements.length === 0) return;
+
+    ast.program.body = [...macroStatements, ...body.filter((statement) => !macroStatements.includes(statement))];
+}

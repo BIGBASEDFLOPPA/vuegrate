@@ -1,6 +1,5 @@
 import {parse} from '@babel/parser';
-import traverse from '@babel/traverse';
-import generate from '@babel/generator';
+import { traverse, generateCode } from '../../core/babel-interop.js';
 import * as t from '@babel/types';
 import type {ScriptTransform} from '../../core/transform-runner.js';
 
@@ -58,5 +57,5 @@ export const convertDataToRefs: ScriptTransform = (scriptCode) => {
         },
     });
 
-    return generate(ast).code;
+    return generateCode(ast);
 };

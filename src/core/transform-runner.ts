@@ -35,6 +35,7 @@ export function runTransforms(
             if (options.only && !options.only.includes(name)) continue;
             newScriptCode = transform(newScriptCode);
         }
+        newScriptCode = `\n${newScriptCode.trim()}\n`;
     }
 
     const templateBlock = parsed.descriptor.template;
