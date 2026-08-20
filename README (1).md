@@ -10,7 +10,7 @@ A CLI codemod that migrates Vue 2 components to Vue 3: Options API → Compositi
 npx vuegrate ./src
 ```
 
-Nothing gets written until you're ready — see `--dry-run` below.
+By default this writes changes straight to your files — run with `--dry-run` first to preview the diff before anything is modified.
 
 ## What it converts
 
@@ -69,7 +69,7 @@ CLI-инструмент для автоматической миграции Vu
 npx vuegrate ./src
 ```
 
-Ничего не запишется на диск, пока не уберёшь `--dry-run` (см. ниже).
+По умолчанию изменения сразу пишутся в файлы — сначала запусти с `--dry-run`, чтобы посмотреть diff, прежде чем что-то реально изменится.
 
 ### Что конвертирует
 
