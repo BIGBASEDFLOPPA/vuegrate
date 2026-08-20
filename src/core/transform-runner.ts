@@ -47,11 +47,19 @@ export function runTransforms(
         }
     }
 
+    const shouldMarkAsScriptSetup =
+        scriptBlock !== undefined &&
+        scriptBlock !== null &&
+        !parsed.descriptor.scriptSetup &&
+        Object.keys(registry.scriptTransforms).length > 0 &&
+        newScriptCode !== null;
+
     const transformedSource = rebuildSource(originalSource, {
         scriptBlock,
         newScriptCode,
         templateBlock,
         newTemplateMarkup,
+        markScriptAsSetup: shouldMarkAsScriptSetup,
     });
 
     return {
@@ -62,10 +70,6 @@ export function runTransforms(
     };
 }
 
-// Vue's parser gives us exact character offsets for each block, so we
-// cut out the old block content and paste in the new content at the
-// same spot instead of regenerating the whole file. Everything outside
-// the blocks (tags, whitespace, <style>) stays untouched.
 function rebuildSource(
     originalSource: string,
     blocks: {
@@ -73,6 +77,7 @@ function rebuildSource(
         newScriptCode: string | null;
         templateBlock: ParsedSFC['descriptor']['template'];
         newTemplateMarkup: string | null;
+        markScriptAsSetup: boolean;
     },
 ): string {
     const edits: { start: number; end: number; replacement: string }[] = [];
@@ -83,6 +88,11 @@ function rebuildSource(
             end: blocks.scriptBlock.loc.end.offset,
             replacement: blocks.newScriptCode,
         });
+
+        if (blocks.markScriptAsSetup) {
+            const tagEdit = addSetupAttributeToScriptTag(originalSource, blocks.scriptBlock.loc.start.offset);
+            if (tagEdit) edits.push(tagEdit);
+        }
     }
 
     if (blocks.templateBlock && blocks.newTemplateMarkup !== null) {
@@ -93,7 +103,6 @@ function rebuildSource(
         });
     }
 
-    // Go from the end of the file backward so earlier offsets don't shift.
     edits.sort((a, b) => b.start - a.start);
 
     let result = originalSource;
@@ -102,4 +111,21 @@ function rebuildSource(
     }
 
     return result;
+}
+
+function addSetupAttributeToScriptTag(
+    originalSource: string,
+    contentStartOffset: number,
+): { start: number; end: number; replacement: string } | null {
+    const tagStart = originalSource.lastIndexOf('<script', contentStartOffset);
+    if (tagStart === -1) return null;
+
+    const tagText = originalSource.slice(tagStart, contentStartOffset);
+    if (/\bsetup\b/.test(tagText)) return null; // already marked as setup
+
+    return {
+        start: tagStart,
+        end: contentStartOffset,
+        replacement: tagText.replace('<script', '<script setup'),
+    };
 }
