@@ -1,6 +1,6 @@
 {
-  "name": "vue-migration",
-  "version": "1.0.2",
+  "name": "vuegrate",
+  "version": "1.0.0",
   "description": "CLI для миграции Vue 2 → Vue 3: Options API → Composition API и обновление синтаксиса шаблонов",
   "type": "module",
   "bin": {
