@@ -49,6 +49,10 @@ This is an early-stage tool — always run with `--dry-run` first, review the di
 - Components already using `<script setup>` are left as-is
 - Deep/mixin-based inheritance patterns aren't rewritten, only preserved via `defineOptions()`
 
+## Feedback
+
+Found a bug or have a pattern that isn't covered? [Open an issue](https://github.com/BIGBASEDFLOPPA/vuegrate/issues) — bug reports and feature requests are both welcome.
+
 ## Status
 
 Early MVP, under active development. Issues and PRs welcome.
@@ -88,6 +92,10 @@ npx vuegrate ./src
 ### Ограничения
 
 Инструмент на раннем этапе — рекомендуется запускать с флагом `--dry-run`, проверять diff и коммитить рабочее состояние перед применением изменений. Динамические имена событий в `this.$emit()`, компоненты уже на `<script setup>`, и глубокая логика через `mixins` — не покрываются автоматически.
+
+### Обратная связь
+
+Нашёл баг или паттерн, который не покрывается? [Создай issue](https://github.com/BIGBASEDFLOPPA/vuegrate/issues) — багрепорты и предложения фич одинаково приветствуются.
 
 ### Лицензия
 

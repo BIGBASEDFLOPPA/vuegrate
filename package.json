@@ -37,8 +37,12 @@
     "cli",
     "composition-api"
   ],
-  "author": "",
+  "author": "sosiska",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BIGBASEDFLOPPA/vuegrate/issues"
+  },
+  "homepage": "https://github.com/BIGBASEDFLOPPA/vuegrate#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BIGBASEDFLOPPA/vuegrate.git"
