@@ -48,7 +48,7 @@
     "url": "git+https://github.com/BIGBASEDFLOPPA/vuegrate.git"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "devDependencies": {
     "@types/babel__generator": "^7.27.0",

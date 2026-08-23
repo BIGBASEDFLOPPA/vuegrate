@@ -95,7 +95,7 @@ npx vuegrate ./src
 
 ### Обратная связь
 
-Нашёл баг или паттерн, который не покрывается? [Создай issue](https://github.com/BIGBASEDFLOPPA/vuegrate/issues) — багрепорты и предложения фич одинаково приветствуются.
+Нашли баг или паттерн, который не покрывается? [Создай issue](https://github.com/BIGBASEDFLOPPA/vuegrate/issues) — багрепорты и фичи одинаково приветствуются.
 
 ### Лицензия
 
